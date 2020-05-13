@@ -27,33 +27,43 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	edge, and weight[n] is the weight of the n-th edge. The graph is undirected, so if src[n]=x
 	and dst[n]=y then there exists an edge m such that src[m]=y and dst[m]=x. */
 
-	for(int i = 0; i < numEdges; i += distance) {
+	//Get thread ID 
+	int tID = blockidx.x * blockDim.x + threadidx.x;
 
-		//Current node
-		left Node(src[i]);
-		//Get index of left node (equal to stride length)
-		int rightNodeIndex = i + distance;
-		//Enforce array bound
-		if(rightNodeIndex > numEdges) {rightNodeIndex = numEdges};
-		//Stride away node
-		right Node(src[rightNodeIndex]);
+	//Terminate if thread ID is larger than array
+	if(tID >= numEdges) return;
 
-		//Only compare nodes in the same stride
-		if(left.src == right.src) {
-			
-			//Get stronger node
-			if(left.weight >= right.weight) { stronger = left} else { stronger = right};
+	//Current node
+	Node left(tID);
 
-			//Set new destination
-			newDst[i] = stronger.dst;
+	//Get index of left node (equal to stride length)
+	int rightNodeIndex = tID + distance;
 
-			//Set new weight
-			newWeight[i] = stronger.weight;
+	//Enforce array bound
+	if(rightNodeIndex > numEdges) {
+		rightNodeIndex = numEdges - 1
+	};
 
-			//Flag any changes
-			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { madeChanges = 1 };
-		};
-	}
+	//Stride away node
+	Node right(src[rightNodeIndex]);
+
+	//Only compare nodes in the same stride
+	if(left.src == right.src) {
+
+		Node stronger;
+		
+		//Get stronger node
+		if(left.weight >= right.weight) { stronger = left } else { stronger = right};
+
+		//Set new destination
+		newDst[tID] = stronger.dst;
+
+		//Set new weight
+		newWeight[tID] = stronger.weight;
+
+		//Flag any changes
+		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { madeChanges = 1 };
+	};
 }
 
 /*
