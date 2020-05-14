@@ -27,9 +27,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	int rightIndex = tID + distance;
 
 	//Enforce array bound
-	if(rightIndex >= numEdges) {
-		rightIndex = numEdges - 1
-	};
+	if(rightIndex >= numEdges) { rightIndex = numEdges - 1; };
 
 
 	//Only compare nodes in the same stride
@@ -37,7 +35,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		int strongerIndex;
 		
 		//Get stronger node
-		if(oldWeight[leftIndex] >= oldWeight[rightIndex]) { strongerIndex = leftIndex } else { strongerIndex = rightIndex};
+		if(oldWeight[leftIndex] >= oldWeight[rightIndex]) { strongerIndex = leftIndex; } else { strongerIndex = rightIndex; };
 
 		//Set new destination
 		newDst[tID] = oldDst[strongerIndex];
@@ -46,7 +44,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		newWeight[tID] = oldWeight[strongerIndex];
 
 		//Flag any changes
-		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { madeChanges = 1 };
+		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
 	};
 }
 
