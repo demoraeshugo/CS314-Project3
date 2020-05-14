@@ -21,7 +21,8 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	int totalThreads = blockDim.x * gridDim.x;
 
 	//Get numOfJobs
-	int numOfJobs = totalThreads / numEdges;
+	int numOfJobs = numEdges / totalThreads;
+	if(numOfJob < 1) { numOfJobs = 1};
 
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
@@ -30,9 +31,9 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 	for(int i = 1; i <= numOfJobs; i++) {
 
-		if(i > 0) { tID += numEdges; };
+		if(i > 1) { tID += numEdges; };
 
-		printf("total :%d numOfJobs : %d tID : %d", totalThreads, numOfJobs, tID);
+		printf("total : %d numOfJobs : %d tID : %d \n", totalThreads, numOfJobs, tID);
 
 		//Terminate if thread ID is larger than array
 		if(tID < numEdges) {
