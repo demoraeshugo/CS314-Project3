@@ -64,7 +64,6 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		//Different segments defaults to no change
 		newDst[tID] = oldDst[tID];
 		newWeight[tID] = oldWeight[tID];
-		*madeChanges = 0;
 	}
 }
 
