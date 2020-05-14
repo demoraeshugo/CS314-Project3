@@ -20,68 +20,54 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Get total num of threads
 	int totalThreads = blockDim.x * gridDim.x;
 
-	//Get numOfJobs
-	int numOfJobs = numEdges / totalThreads;
-	if(numOfJobs < 1) { numOfJobs = 1; };
-
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
+	//Case where more threads than needed
 	if(tID >= numEdges) return;
 
-	for(int i = 1; i <= numOfJobs; i++) {
+	for(int i = tID; i < numEdges; i++) {
+		//Current node
+		int rightIndex = i;
 
-		if(i > 1) { tID += totalThreads; };
+		//Stride away node
+		int leftIndex = i - distance;
 
-		//printf("numEdges : %d, numThreads : %d numOfJobs : %d tID : %d \n", numEdges, totalThreads, numOfJobs, tID);
+		//Enforce array bound
+		if(leftIndex < 0) { leftIndex = 0; };
 
-		//Terminate if thread ID is larger than array
-		if(tID < numEdges) {
-			//Current node
-			int rightIndex = tID;
-
-			//Stride away node
-			int leftIndex = tID - distance;
-
-			//Enforce array bound
-			if(leftIndex < 0) { leftIndex = 0; };
-
-			//Only compare nodes in the same segment
-			if(src[leftIndex] == src[rightIndex]) {
-				int strongerIndex;
-				
-				//Get stronger node
-				if(oldWeight[leftIndex] > oldWeight[rightIndex]) { 
-					strongerIndex = leftIndex; 
-				} else if(oldWeight[leftIndex] < oldWeight[rightIndex]){ 
-					strongerIndex = rightIndex; 
-				} else {
-					//if equal weights, take node with smaller vID
-					if(oldDst[leftIndex] < oldDst[rightIndex]) { 
-						strongerIndex = leftIndex; 
-					} else { 
-						strongerIndex = rightIndex; 
-					};
-				}
-
-				//Set new destination
-				newDst[tID] = oldDst[strongerIndex];
-
-				//Set new weight
-				newWeight[tID] = oldWeight[strongerIndex];
-
-				//Flag any changes
-				if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
-
-				//printf("Stronger: %d \n", strongerIndex);
-
+		//Only compare nodes in the same segment
+		if(src[leftIndex] == src[rightIndex]) {
+			int strongerIndex;
+			
+			//Get stronger node
+			if(oldWeight[leftIndex] > oldWeight[rightIndex]) { 
+				strongerIndex = leftIndex; 
+			} else if(oldWeight[leftIndex] < oldWeight[rightIndex]){ 
+				strongerIndex = rightIndex; 
 			} else {
-				//Different segments defaults to no change
-				newDst[tID] = oldDst[tID];
-				newWeight[tID] = oldWeight[tID];
+				//if equal weights, take node with smaller vID
+				if(oldDst[leftIndex] < oldDst[rightIndex]) { 
+					strongerIndex = leftIndex; 
+				} else { 
+					strongerIndex = rightIndex; 
+				};
 			}
+
+			//Set new destination
+			newDst[i] = oldDst[strongerIndex];
+
+			//Set new weight
+			newWeight[i] = oldWeight[strongerIndex];
+
+			//Flag any changes
+			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; };
+
+		} else {
+			//Different segments defaults to no change
+			newDst[i] = oldDst[i];
+			newWeight[i] = oldWeight[i];
 		}
-		
 	}
 }
 
