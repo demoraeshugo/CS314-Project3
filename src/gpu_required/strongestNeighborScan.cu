@@ -26,7 +26,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Case where more threads than needed
 	if(tID >= numEdges) return;
 
-	for(int i = tID; i < numEdges; i+=totalThreads) {
+	for(int i = tID; i < numEdges; i += totalThreads) {
 		//Current node
 		int rightIndex = i;
 
@@ -61,7 +61,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 			newWeight[i] = oldWeight[strongerIndex];
 
 			//Flag any changes
-			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; };
+			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; } else { *madeChanges = 0 }
 
 		} else {
 			//Different segments defaults to no change
