@@ -27,7 +27,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	int rightIndex = tID + distance;
 
 	//Enforce array bound
-	if(rightIndex >= numEdges) { rightIndex = numEdges; };
+	if(rightIndex >= numEdges) { rightIndex = numEdges - 1; };
 
 
 	//Only compare nodes in the same stride
