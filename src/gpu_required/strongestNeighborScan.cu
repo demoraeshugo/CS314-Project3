@@ -34,54 +34,57 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
+	if(tID >= numEdges) { return };
+
 	for(int i = 1; i <= numOfJobs; i++) {
-		tID *= i;
+		
+		if(i > 0) { tID += numEdges; };
 
 		//Terminate if thread ID is larger than array
-		if(tID >= numEdges) return;
+		if(tID < numEdges) {
+			//Current node
+			int rightIndex = tID;
 
-		//Current node
-		int rightIndex = tID;
+			//Stride away node
+			int leftIndex = tID - distance;
 
-		//Stride away node
-		int leftIndex = tID - distance;
+			//Enforce array bound
+			if(leftIndex < 0) { leftIndex = 0; };
 
-		//Enforce array bound
-		if(leftIndex < 0) { leftIndex = 0; };
-
-
-		//Only compare nodes in the same segment
-		if(src[leftIndex] == src[rightIndex]) {
-			int strongerIndex;
-			
-			//Get stronger node
-			if(oldWeight[leftIndex] > oldWeight[rightIndex]) { 
-				strongerIndex = leftIndex; 
-			} else if(oldWeight[leftIndex] < oldWeight[rightIndex]){ 
-				strongerIndex = rightIndex; 
-			} else {
-				//if equal weights, take node with smaller vID
-				if(oldDst[leftIndex] < oldDst[rightIndex]) { 
+			//Only compare nodes in the same segment
+			if(src[leftIndex] == src[rightIndex]) {
+				int strongerIndex;
+				
+				//Get stronger node
+				if(oldWeight[leftIndex] > oldWeight[rightIndex]) { 
 					strongerIndex = leftIndex; 
-				} else { 
+				} else if(oldWeight[leftIndex] < oldWeight[rightIndex]){ 
 					strongerIndex = rightIndex; 
-				};
+				} else {
+					//if equal weights, take node with smaller vID
+					if(oldDst[leftIndex] < oldDst[rightIndex]) { 
+						strongerIndex = leftIndex; 
+					} else { 
+						strongerIndex = rightIndex; 
+					};
+				}
+
+				//Set new destination
+				newDst[tID] = oldDst[strongerIndex];
+
+				//Set new weight
+				newWeight[tID] = oldWeight[strongerIndex];
+
+				//Flag any changes
+				if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
+
+			} else {
+				//Different segments defaults to no change
+				newDst[tID] = oldDst[tID];
+				newWeight[tID] = oldWeight[tID];
 			}
-
-			//Set new destination
-			newDst[tID] = oldDst[strongerIndex];
-
-			//Set new weight
-			newWeight[tID] = oldWeight[strongerIndex];
-
-			//Flag any changes
-			if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
-
-		} else {
-			//Different segments defaults to no change
-			newDst[tID] = oldDst[tID];
-			newWeight[tID] = oldWeight[tID];
 		}
+		
 	}
 }
 
