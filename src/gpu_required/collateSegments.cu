@@ -8,9 +8,14 @@
 #include <stdlib.h>
 
 __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, int numEdges) {
-	/*YOUR CODE HERE*/
-	for(int i = 0; i < numEdges; i++) {
-		char output = scanResult[i];
-		printf("Value of src[%d] = %c \n", i, output);
+	//Get thread ID 
+	int tID = blockIdx.x * blockDim.x + threadIdx.x;
+
+	//Terminate if thread ID is larger than array
+	if(tID >= numEdges-1) return;
+
+	//Check if at end of segment
+	if(src[tID] != src[tID+1]]) {
+		ouput[src[tId]] = scanResult[tID];
 	}
 }
