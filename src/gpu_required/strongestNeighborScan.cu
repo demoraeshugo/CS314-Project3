@@ -26,7 +26,8 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Case where more threads than needed
 	if(tID >= numEdges) return;
 
-	for(int i = tID; i < numEdges; i += totalThreads) {
+	int i = tID
+	while(i < numEdges) {
 		printf("tID : %d of %d -------------- Doing work on src[%d]\n", tID, totalThreads, i);
 		//Current node
 		int rightIndex = i;
@@ -69,6 +70,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 			newDst[i] = oldDst[i];
 			newWeight[i] = oldWeight[i];
 		}
+		i += totalThreads;
 	}
 }
 
