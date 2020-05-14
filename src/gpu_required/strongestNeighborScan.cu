@@ -5,7 +5,7 @@
  **********************************************
  */
 
- //./gsn ./testcases/input1.mtx output.txt 20
+ //./gsn ./testcases/input2.mtx output.txt 20 less output.txt
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,7 +38,18 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		int strongerIndex;
 		
 		//Get stronger node
-		if(oldWeight[leftIndex] >= oldWeight[rightIndex]) { strongerIndex = leftIndex; } else { strongerIndex = rightIndex; };
+		if(oldWeight[leftIndex] > oldWeight[rightIndex]) { 
+			strongerIndex = leftIndex; 
+		} else if(oldWeight[leftIndex] < oldWeight[rightIndex]){ 
+			strongerIndex = rightIndex; 
+		} else {
+			//if equal weights, take node with smaller vID
+			if(dst[leftIndex] < dst[rightIndex]) { 
+				strongerIndex = leftIndex; 
+			} else { 
+				strongerIndex = rightIndex; 
+			};
+		}
 
 		//Set new destination
 		newDst[tID] = oldDst[strongerIndex];
