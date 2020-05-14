@@ -7,19 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
-//Define a graph node object
-class Node {
-public:
-	int src, dst, weight;
-	
-	Node(int x, int y, int z) {
-		src = x;
-		dst = y;
-		weight = z;
-	}
-};
-
 __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst, int * oldWeight, int * newWeight, int * madeChanges, int distance, int numEdges) {
 	/*YOUR CODE HERE*/
 	/* The graph is encoded as an edge list consisting of three arrays: src, dst, and weight, such
@@ -28,38 +15,34 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	and dst[n]=y then there exists an edge m such that src[m]=y and dst[m]=x. */
 
 	//Get thread ID 
-	int tID = blockidx.x * blockDim.x + threadidx.x;
+	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
 	//Terminate if thread ID is larger than array
 	if(tID >= numEdges) return;
 
 	//Current node
-	Node left(tID);
-
-	//Get index of left node (equal to stride length)
-	int rightNodeIndex = tID + distance;
-
-	//Enforce array bound
-	if(rightNodeIndex > numEdges) {
-		rightNodeIndex = numEdges - 1
-	};
+	int leftIndex = tID;
 
 	//Stride away node
-	Node right(src[rightNodeIndex]);
+	int rightIndex = tID + distance;
+
+	//Enforce array bound
+	if(rightIndex >= numEdges) {
+		rightIndex = numEdges - 1
+	};
+
 
 	//Only compare nodes in the same stride
-	if(left.src == right.src) {
-
-		Node stronger;
+	if(src[left] == src[right]) {
 		
 		//Get stronger node
-		if(left.weight >= right.weight) { stronger = left } else { stronger = right};
+		if(oldWeight[left] >= oldWeight[right]) { strongerIndex = leftIndex } else { strongerIndex = rightIndex};
 
 		//Set new destination
-		newDst[tID] = stronger.dst;
+		newDst[tID] = oldDst[strongerIndex];
 
 		//Set new weight
-		newWeight[tID] = stronger.weight;
+		newWeight[tID] = oldWeight[strongerIndex];
 
 		//Flag any changes
 		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { madeChanges = 1 };
