@@ -22,7 +22,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 	//Get numOfJobs
 	int numOfJobs = numEdges / totalThreads;
-	if(numOfJob < 1) { numOfJobs = 1};
+	if(numOfJobs < 1) { numOfJobs = 1; };
 
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
