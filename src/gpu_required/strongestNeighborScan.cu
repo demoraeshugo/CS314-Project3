@@ -29,7 +29,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		thus for each tID, add self and repeat, n
 	*/
 	//Get numOfJobs
-	int numOfJobs = floor(totalThreads / numEdges);
+	int numOfJobs = totalThreads / numEdges;
 
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
