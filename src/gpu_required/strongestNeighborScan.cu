@@ -31,7 +31,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 	for(int i = 1; i <= numOfJobs; i++) {
 
-		if(i > 1) { tID += numEdges; };
+		if(i > 1) { tID += totalThreads; };
 
 		printf("numEdges : %d, numThreads : %d numOfJobs : %d tID : %d \n", numEdges, totalThreads, numOfJobs, tID);
 
@@ -73,7 +73,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 				//Flag any changes
 				if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
 
-				printf("Stronger: %d", strongerIndex);
+				printf("Stronger: %d \n", strongerIndex);
 
 			} else {
 				//Different segments defaults to no change
