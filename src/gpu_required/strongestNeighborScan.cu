@@ -33,10 +33,11 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 
 	//Only compare nodes in the same stride
-	if(src[left] == src[right]) {
+	if(src[leftIndex] == src[rightIndex]) {
+		int strongerIndex;
 		
 		//Get stronger node
-		if(oldWeight[left] >= oldWeight[right]) { strongerIndex = leftIndex } else { strongerIndex = rightIndex};
+		if(oldWeight[leftIndex] >= oldWeight[rightIndex]) { strongerIndex = leftIndex } else { strongerIndex = rightIndex};
 
 		//Set new destination
 		newDst[tID] = oldDst[strongerIndex];
