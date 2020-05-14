@@ -62,9 +62,6 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 			//Set new weight
 			newWeight[i] = oldWeight[strongerIndex];
 
-			//Flag any changes
-			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; };
-
 		} else {
 			//Different segments defaults to no change
 			newDst[i] = oldDst[i];
@@ -72,6 +69,11 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		}
 		i += totalThreads;
 	}
+	while(i <= numEdges || *madeChanges == 0) {
+		 //Flag any changes
+		 if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) *madeChanges = 1;
+		 i += totalThreads;
+	} 
 }
 
 /*
