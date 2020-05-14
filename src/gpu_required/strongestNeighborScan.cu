@@ -61,8 +61,8 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 			newWeight[i] = oldWeight[strongerIndex];
 
 			//Flag any changes
-			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; } else { *madeChanges = 0; }
-
+			if((newDst[i] != oldDst[i]) || (newWeight[i] != oldWeight[i])) { *madeChanges = 1; };
+			
 		} else {
 			//Different segments defaults to no change
 			newDst[i] = oldDst[i];
