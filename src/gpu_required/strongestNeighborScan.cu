@@ -33,7 +33,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	if(leftIndex < 0) { leftIndex = 0; };
 
 
-	//Only compare nodes in the same stride
+	//Only compare nodes in the same segment
 	if(src[leftIndex] == src[rightIndex]) {
 		int strongerIndex;
 		
@@ -59,9 +59,12 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 		//Flag any changes
 		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
+
 	} else {
+		//Different segments defaults to no change
 		newDst[tID] = oldDst[tID];
 		newWeight[tID] = oldWeight[tID];
+		*madeChanges = 0;
 	}
 }
 
