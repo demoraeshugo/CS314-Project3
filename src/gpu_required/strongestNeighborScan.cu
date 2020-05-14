@@ -23,11 +23,13 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
+	/*
 	//Case where more threads than needed
 	if(tID >= numEdges) return;
+	*/
 
 	int i = tID;
-	while(i < numEdges) {
+	while(i <= numEdges) {
 		printf("tID : %d of %d -------------- Doing work on src[%d]\n", tID, totalThreads, i);
 		//Current node
 		int rightIndex = i;
