@@ -6,8 +6,12 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, int numEdges) {
 	/*YOUR CODE HERE*/
-	printf(scanResult);
+	for(int i = 0; i < numEdges; i++) {
+		cout << "Value of src[" << i << "] = ";
+		cout << src[i] << endl;
+	}
 }
