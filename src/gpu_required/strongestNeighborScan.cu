@@ -34,10 +34,10 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
-	if(tID >= numEdges) { return };
+	if(tID >= numEdges) return;
 
 	for(int i = 1; i <= numOfJobs; i++) {
-		
+
 		if(i > 0) { tID += numEdges; };
 
 		//Terminate if thread ID is larger than array
