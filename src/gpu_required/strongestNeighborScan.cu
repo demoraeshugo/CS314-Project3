@@ -14,8 +14,11 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	edge, and weight[n] is the weight of the n-th edge. The graph is undirected, so if src[n]=x
 	and dst[n]=y then there exists an edge m such that src[m]=y and dst[m]=x. */
 
-	
-	
+	//Get thread ID 
+	int tID = blockIdx.x * blockDim.x + threadIdx.x;
+
+	//Terminate if thread ID is larger than array
+	if(tID >= numEdges) return;
 
 	//Current node
 	int leftIndex = tID;
