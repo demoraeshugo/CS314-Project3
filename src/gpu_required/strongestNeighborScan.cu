@@ -29,12 +29,12 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 		thus for each tID, add self and repeat, n
 	*/
 	//Get numOfJobs
-	int numOfJobs = Math.floor(totalThreads / numEdges);
+	int numOfJobs = floor(totalThreads / numEdges);
 
 	//Get thread ID 
 	int tID = blockIdx.x * blockDim.x + threadIdx.x;
 
-	for(let i = 1; i <= numOfJobs; i++) {
+	for(int i = 1; i <= numOfJobs; i++) {
 		tID *= i;
 
 		//Terminate if thread ID is larger than array
