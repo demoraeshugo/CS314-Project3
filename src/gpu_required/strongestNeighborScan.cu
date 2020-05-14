@@ -5,7 +5,7 @@
  **********************************************
  */
 
- //./gsn ./testcases/input2.mtx output.txt 20 less output.txt
+ //./gsn ./testcases/input1.mtx output.txt 20 less output.txt
 
 #include <stdio.h>
 #include <stdlib.h>

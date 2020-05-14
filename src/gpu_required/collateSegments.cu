@@ -18,4 +18,9 @@ __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, i
 	if(src[tID] != src[tID+1]) {
 		output[src[tID]] = scanResult[tID];
 	}
+
+	//Edge Case
+	if(tID = numEdges -1) {
+		output[src[tID]] = scanResult[tID];
+	}
 }
