@@ -21,13 +21,13 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	if(tID >= numEdges) return;
 
 	//Current node
-	int leftIndex = tID;
+	int rightIndex = tID;
 
 	//Stride away node
-	int rightIndex = tID + distance;
+	int leftIndex = tID - distance;
 
 	//Enforce array bound
-	if(rightIndex >= numEdges) { rightIndex = numEdges - 1; };
+	if(leftIndex < 0) { leftIndex = 0; };
 
 
 	//Only compare nodes in the same stride
@@ -58,4 +58,43 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
  * @param madeChanges If our output is different than our input then we must set *madeChanges to 1, so the host will know to launch another step of the scan.
  * @param distance The distance between array locations being examined. This is always a power of 2.
  * @param numEdges The size of the index, weight, and flags arrays.
+*/
+
+/*
+__global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst, int * oldWeight, int * newWeight, int * madeChanges, int distance, int numEdges) {
+
+	//Get thread ID 
+	int tID = blockIdx.x * blockDim.x + threadIdx.x;
+
+	//Terminate if thread ID is larger than array
+	if(tID >= numEdges) return;
+
+	//Current node
+	int leftIndex = tID;
+
+	//Stride away node
+	int rightIndex = tID + distance;
+
+	//Enforce array bound
+	if(rightIndex >= numEdges) { rightIndex = numEdges - 1; };
+
+
+	//Only compare nodes in the same stride
+	if(src[leftIndex] == src[rightIndex]) {
+		int strongerIndex;
+		
+		//Get stronger node
+		if(oldWeight[leftIndex] >= oldWeight[rightIndex]) { strongerIndex = leftIndex; } else { strongerIndex = rightIndex; };
+
+		//Set new destination
+		newDst[tID] = oldDst[strongerIndex];
+
+		//Set new weight
+		newWeight[tID] = oldWeight[strongerIndex];
+
+		//Flag any changes
+		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
+	};
+}
+
 */
