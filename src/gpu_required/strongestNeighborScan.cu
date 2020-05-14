@@ -44,7 +44,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 			strongerIndex = rightIndex; 
 		} else {
 			//if equal weights, take node with smaller vID
-			if(dst[leftIndex] < dst[rightIndex]) { 
+			if(oldDst[leftIndex] < oldDst[rightIndex]) { 
 				strongerIndex = leftIndex; 
 			} else { 
 				strongerIndex = rightIndex; 
