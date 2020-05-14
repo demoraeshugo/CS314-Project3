@@ -4,6 +4,9 @@
  *  Spring 2020                               *
  **********************************************
  */
+
+ //./gsn ./testcases/input1.mtx output.txt 20
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -24,7 +27,7 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 	int rightIndex = tID;
 
 	//Stride away node
-	int leftIndex = tID - distance + 1;
+	int leftIndex = tID - distance;
 
 	//Enforce array bound
 	if(leftIndex < 0) { leftIndex = 0; };
@@ -45,7 +48,10 @@ __global__ void strongestNeighborScan_gpu(int * src, int * oldDst, int * newDst,
 
 		//Flag any changes
 		if((newDst[tID] != oldDst[tID]) || (newWeight[tID] != oldWeight[tID])) { *madeChanges = 1; };
-	};
+	} else {
+		newDst[tID] = oldDst[tID];
+		newWeight[tID] = oldWeight[tID];
+	}
 }
 
 /*
