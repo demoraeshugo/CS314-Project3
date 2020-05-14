@@ -15,7 +15,7 @@ __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, i
 	if(tID >= numEdges-1) return;
 
 	//Check if at end of segment
-	if(src[tID] != src[tID+1]]) {
-		ouput[src[tId]] = scanResult[tID];
+	if(src[tID] != src[tID+1]) {
+		output[src[tID]] = scanResult[tID];
 	}
 }
