@@ -14,6 +14,8 @@ __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, i
 	//Terminate if thread ID is larger than array
 	if(tID >= numEdges - 1) return;
 
+	printf("total : %d numOfJobs : %d tID : %d \n", totalThreads, numOfJobs, tID);
+
 	//Check if at end of segment
 	if(src[tID] != src[tID+1]) {
 		output[src[tID]] = scanResult[tID];
