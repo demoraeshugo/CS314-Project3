@@ -10,6 +10,7 @@
 __global__ void collateSegments_gpu(int * src, int * scanResult, int * output, int numEdges) {
 	/*YOUR CODE HERE*/
 	for(int i = 0; i < numEdges; i++) {
-		printf("Value of src[%d] = %c \n", i, scanResult[i]);
+		char output = scanResult[i]
+		printf("Value of src[%d] = %c \n", i, output);
 	}
 }
